@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Vocacional - Em Andamento</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #f4f7f6;
+        }
+        .option-button.selected {
+            border-color: #3b82f6; /* Azul */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <main class="w-full max-w-2xl mx-auto">
+        <div id="quiz-screen" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg hidden">
+            <h2 id="question-text" class="text-xl sm:text-2xl font-bold text-gray-800 mb-6"></h2>
+            <div id="options-container" class="space-y-3"></div>
+            
+            <p id="progress-text" class="text-center text-gray-500 mt-6"></p>
+
+            <div class="flex justify-between items-center mt-6">
+                <button id="back-button" class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors">Voltar</button>
+                <button id="next-button" class="px-5 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed" disabled>Próximo</button>
+            </div>
+        </div>
+
+        <div id="result-screen" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg hidden">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 text-center">Seu Resultado</h2>
+            <div id="result-content" class="max-h-[60vh] overflow-y-auto pr-2"></div>
+            <div class="text-center mt-6">
+                 <button id="restart-button" class="px-6 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">Refazer o Teste</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const questions = [
+            {
+                q: "1. Se você fosse um personagem de anime, quem escolheria?",
+                options: [
+                    { text: "Naruto (determinação)", points: { H: 2, C: 2 }, image: "https://placehold.co/80x80/FFAB7A/000000?text=Naruto" },
+                    { text: "L, Death Note (lógica)", points: { E: 3, H: 1 }, image: "https://placehold.co/80x80/DEDFE0/000000?text=L" },
+                    { text: "Chopper, One Piece (cuidador)", points: { S: 3 }, image: "https://placehold.co/80x80/E8C3D1/000000?text=Chopper" },
+                    { text: "Shouko, A Silent Voice (empatia)", points: { A: 2, H: 2 }, image: "https://placehold.co/80x80/D6A2B6/000000?text=Shouko" }
+                ]
+            },
+            {
+                q: "2. Qual desses filmes você mais gosta?",
+                options: [
+                    { text: "Interestelar (ciência)", points: { E: 3 }, image: "https://placehold.co/80x80/000000/FFFFFF?text=SCI-FI" },
+                    { text: "Harry Potter (amizade e ensino)", points: { H: 2, A: 2 }, image: "https://placehold.co/80x80/6E0000/FFFFFF?text=HP" },
+                    { text: "Grey’s Anatomy (cuidado e medicina)", points: { S: 3 }, image: "https://placehold.co/80x80/7AB2B2/FFFFFF?text=GA" },
+                    { text: "Capitão América (proteção)", points: { C: 3 }, image: "https://placehold.co/80x80/002366/FFFFFF?text=Cap" }
+                ]
+            },
+            {
+                q: "3. Qual estilo musical te define mais?",
+                options: [
+                    { text: "Rock (criativo e ousado)", points: { A: 3 }, image: "https://placehold.co/80x80/C31F1F/FFFFFF?text=Rock" },
+                    { text: "Sertanejo (tradição)", points: { S: 2, C: 2 }, image: "https://placehold.co/80x80/D4A276/FFFFFF?text=Sertanejo" },
+                    { text: "Pop (comunicação)", points: { H: 3 }, image: "https://placehold.co/80x80/E56DB1/FFFFFF?text=Pop" },
+                    { text: "Música clássica (disciplina)", points: { E: 2, C: 2 }, image: "https://placehold.co/80x80/4F4A45/FFFFFF?text=Clássica" }
+                ]
+            },
+            {
+                q: "4. Qual criatura você escolheria como guardiã?",
+                options: [
+                    { text: "Dragão (força)", points: { C: 3 }, image: "https://placehold.co/80x80/A91D3A/FFFFFF?text=Dragão" },
+                    { text: "Fada (cuidado)", points: { S: 3 }, image: "https://placehold.co/80x80/C6EBC5/000000?text=Fada" },
+                    { text: "Robô (tecnologia)", points: { E: 3 }, image: "https://placehold.co/80x80/C7C8CC/000000?text=Robô" },
+                    { text: "Fênix (renascimento e arte)", points: { A: 3 }, image: "https://placehold.co/80x80/F57D1F/FFFFFF?text=Fênix" }
+                ]
+            },
+            {
+                q: "5. Em um show, você seria…",
+                options: [
+                    { text: "O que organiza a galera", points: { H: 2, C: 2 }, image: "https://placehold.co/80x80/F4D160/000000?text=Líder" },
+                    { text: "O que analisa o som e luz", points: { E: 3 }, image: "https://placehold.co/80x80/7469B6/FFFFFF?text=Técnico" },
+                    { text: "O que cuida se alguém passar mal", points: { S: 3 }, image: "https://placehold.co/80x80/AD88C6/FFFFFF?text=Cuidador" },
+                    { text: "O que canta/dança até o fim", points: { A: 3 }, image: "https://placehold.co/80x80/E1AFD1/000000?text=Artista" }
+                ]
+            },
+            {
+                q: "6. Qual desses heróis você mais admira?",
+                options: [
+                    { text: "Batman (estratégia e tecnologia)", points: { E: 3 }, image: "https://placehold.co/80x80/272829/FFFFFF?text=Batman" },
+                    { text: "Mulher-Maravilha (justiça)", points: { C: 3 }, image: "https://placehold.co/80x80/C08261/FFFFFF?text=WW" },
+                    { text: "Doutor Estranho (cura e sabedoria)", points: { S: 3 }, image: "https://placehold.co/80x80/B6BBC4/000000?text=Dr" },
+                    { text: "Homem-Aranha (criatividade e comunicação)", points: { H: 2, A: 1 }, image: "https://placehold.co/80x80/E0144C/FFFFFF?text=Spider" }
+                ]
+            },
+            {
+                q: "7. Se fosse viver dentro de um jogo, qual seria?",
+                options: [
+                    { text: "Minecraft (construção)", points: { E: 3 }, image: "https://placehold.co/80x80/79AC78/000000?text=Mine" },
+                    { text: "The Sims (sociedade)", points: { H: 3 }, image: "https://placehold.co/80x80/94B49F/000000?text=Sims" },
+                    { text: "Pokémon (cuidado)", points: { S: 3 }, image: "https://placehold.co/80x80/FCF5ED/000000?text=PKMN" },
+                    { text: "Just Dance (arte)", points: { A: 3 }, image: "https://placehold.co/80x80/CE5A67/FFFFFF?text=Dance" }
+                ]
+            },
+            {
+                q: "8. Qual casa de Hogwarts combina com você?",
+                options: [
+                    { text: "Grifinória (coragem)", points: { C: 3 }, image: "https://placehold.co/80x80/B90000/FFFFFF?text=G" },
+                    { text: "Corvinal (inteligência)", points: { E: 3 }, image: "https://placehold.co/80x80/002366/FFFFFF?text=C" },
+                    { text: "Lufa-Lufa (solidariedade)", points: { S: 3 }, image: "https://placehold.co/80x80/FFDB58/000000?text=L" },
+                    { text: "Sonserina (ambição)", points: { H: 3 }, image: "https://placehold.co/80x80/004225/FFFFFF?text=S" }
+                ]
+            },
+            {
+                q: "9. Qual profissão de série/filme você teria?",
+                options: [
+                    { text: "Tony Stark – engenheiro", points: { E: 3 }, image: "https://placehold.co/80x80/B80000/FFFFFF?text=Tony" },
+                    { text: "Meredith Grey – médica", points: { S: 3 }, image: "https://placehold.co/80x80/5DB1A4/000000?text=Meredith" },
+                    { text: "Harvey Specter – advogado", points: { H: 3 }, image: "https://placehold.co/80x80/344955/FFFFFF?text=Harvey" },
+                    { text: "Lady Gaga – artista", points: { A: 3 }, image: "https://placehold.co/80x80/F1EAFF/000000?text=Gaga" }
+                ]
+            },
+            {
+                q: "10. Qual animal te representa melhor?",
+                options: [
+                    { text: "Águia (estratégia)", points: { E: 3 }, image: "https://placehold.co/80x80/B5C0D0/000000?text=Águia" },
+                    { text: "Leão (coragem)", points: { C: 3 }, image: "https://placehold.co/80x80/F5CCA0/000000?text=Leão" },
+                    { text: "Golfinho (inteligência e cuidado)", points: { S: 3 }, image: "https://placehold.co/80x80/A2D2FF/000000?text=Golfinho" },
+                    { text: "Gato (independente e criativo)", points: { A: 2, H: 1 }, image: "https://placehold.co/80x80/F8F0E5/000000?text=Gato" }
+                ]
+            },
+            {
+                q: "11. Qual anime você prefere?",
+                options: [
+                    { text: "Steins;Gate (ciência)", points: { E: 3 }, image: "https://placehold.co/80x80/EBC49F/000000?text=S;G" },
+                    { text: "Cells at Work (saúde)", points: { S: 3 }, image: "https://placehold.co/80x80/F2F2F2/000000?text=CAW" },
+                    { text: "Death Note (ética)", points: { H: 3 }, image: "https://placehold.co/80x80/454545/FFFFFF?text=DN" },
+                    { text: "Your Name (arte e emoção)", points: { A: 3 }, image: "https://placehold.co/80x80/387ADF/FFFFFF?text=YN" }
+                ]
+            },
+            {
+                q: "12. Em uma banda, qual seria seu papel?",
+                options: [
+                    { text: "Guitarrista (técnica e precisão)", points: { E: 3 }, image: "https://placehold.co/80x80/31363F/FFFFFF?text=Guitar" },
+                    { text: "Vocalista (liderança)", points: { H: 2, A: 1 }, image: "https://placehold.co/80x80/B0A695/000000?text=Vocal" },
+                    { text: "Baterista (ritmo e energia)", points: { C: 3 }, image: "https://placehold.co/80x80/7D7C7C/FFFFFF?text=Batera" },
+                    { text: "Compositor (criatividade)", points: { A: 3 }, image: "https://placehold.co/80x80/F5E8C7/000000?text=Letra" }
+                ]
+            },
+            {
+                q: "13. Qual gênero de filme você prefere?",
+                options: [
+                    { text: "Ficção científica", points: { E: 3 }, image: "https://placehold.co/80x80/3D3B40/FFFFFF?text=SciFi" },
+                    { text: "Drama humano", points: { S: 3 }, image: "https://placehold.co/80x80/B3A398/FFFFFF?text=Drama" },
+                    { text: "Documentário histórico", points: { H: 3 }, image: "https://placehold.co/80x80/8A817C/FFFFFF?text=Doc" },
+                    { text: "Musical/comédia", points: { A: 3 }, image: "https://placehold.co/80x80/FFC0D9/000000?text=Musical" }
+                ]
+            },
+            {
+                q: "14. Se fosse uma ferramenta, qual seria?",
+                options: [
+                    { text: "Calculadora", points: { E: 3 }, image: "https://placehold.co/80x80/525252/FFFFFF?text=123" },
+                    { text: "Estetoscópio", points: { S: 3 }, image: "https://placehold.co/80x80/9BBEC8/000000?text=Steto" },
+                    { text: "Código de leis", points: { H: 3 }, image: "https://placehold.co/80x80/9A3B3B/FFFFFF?text=Lei" },
+                    { text: "Pincel", points: { A: 3 }, image: "https://placehold.co/80x80/C68484/FFFFFF?text=Arte" }
+                ]
+            },
+            {
+                q: "15. Qual banda/artista você mais curte?",
+                options: [
+                    { text: "Daft Punk (tecnologia + música)", points: { E: 3 }, image: "https://placehold.co/80x80/DDDDDD/000000?text=Daft" },
+                    { text: "Chitãozinho & Xororó (tradição)", points: { S: 2, H: 1 }, image: "https://placehold.co/80x80/C07F00/FFFFFF?text=C&X" },
+                    { text: "Legião Urbana (questionamento social)", points: { H: 3 }, image: "https://placehold.co/80x80/222831/FFFFFF?text=LU" },
+                    { text: "Freddie Mercury (criatividade)", points: { A: 3 }, image: "https://placehold.co/80x80/F7C566/000000?text=Queen" }
+                ]
+            },
+            {
+                q: "16. Se tivesse um poder especial, qual seria?",
+                options: [
+                    { text: "Super inteligência", points: { E: 3 }, image: "https://placehold.co/80x80/A0DEFF/000000?text=Mente" },
+                    { text: "Cura", points: { S: 3 }, image: "https://placehold.co/80x80/86A789/FFFFFF?text=Cura" },
+                    { text: "Persuasão", points: { H: 3 }, image: "https://placehold.co/80x80/E19898/FFFFFF?text=Voz" },
+                    { text: "Criar ilusões", points: { A: 3 }, image: "https://placehold.co/80x80/B2A4FF/FFFFFF?text=Ilusão" }
+                ]
+            },
+            {
+                q: "17. O que mais te motiva em um trabalho?",
+                options: [
+                    { text: "Resolver problemas", points: { E: 3 }, image: "https://placehold.co/80x80/7A9D54/FFFFFF?text=Puzzle" },
+                    { text: "Ajudar pessoas", points: { S: 3 }, image: "https://placehold.co/80x80/88AB8E/FFFFFF?text=Ajuda" },
+                    { text: "Liderar e influenciar", points: { H: 2, C: 2 }, image: "https://placehold.co/80x80/C6A969/FFFFFF?text=Líder" },
+                    { text: "Expressar criatividade", points: { A: 3 }, image: "https://placehold.co/80x80/9D76C1/FFFFFF?text=Criar" }
+                ]
+            },
+            {
+                q: "18. Se fosse participar de uma olimpíada escolar, seria em…",
+                options: [
+                    { text: "Matemática/Física", points: { E: 3 }, image: "https://placehold.co/80x80/2C4E80/FFFFFF?text=Math" },
+                    { text: "Biologia/Química", points: { S: 3 }, image: "https://placehold.co/80x80/008170/FFFFFF?text=Bio" },
+                    { text: "História/Geografia", points: { H: 3 }, image: "https://placehold.co/80x80/9B4444/FFFFFF?text=Hist" },
+                    { text: "Artes/Literatura", points: { A: 3 }, image: "https://placehold.co/80x80/86469C/FFFFFF?text=Arte" }
+                ]
+            },
+            {
+                q: "19. Qual desses concursos você faria?",
+                options: [
+                    { text: "Polícia Federal", points: { C: 3 }, image: "https://placehold.co/80x80/01204E/FFFFFF?text=PF" },
+                    { text: "Médico Militar", points: { S: 2, C: 2 }, image: "https://placehold.co/80x80/0A6847/FFFFFF?text=MM" },
+                    { text: "Diplomata", points: { H: 3 }, image: "https://placehold.co/80x80/50623A/FFFFFF?text=Dip" },
+                    { text: "INSS", points: { H: 2, C: 2 }, image: "https://placehold.co/80x80/7F8A84/FFFFFF?text=INSS" }
+                ]
+            },
+            {
+                q: "20. Qual frase combina mais com você?",
+                options: [
+                    { text: "A lógica sempre vence.", points: { E: 3 }, image: "https://placehold.co/80x80/3D30A2/FFFFFF?text=Lógica" },
+                    { text: "Cuidar dos outros é cuidar de mim mesmo.", points: { S: 3 }, image: "https://placehold.co/80x80/219C90/FFFFFF?text=Cuidado" },
+                    { text: "A justiça é o meu caminho.", points: { H: 2, C: 2 }, image: "https://placehold.co/80x80/860A35/FFFFFF?text=Justiça" },
+                    { text: "A vida sem arte não tem graça.", points: { A: 3 }, image: "https://placehold.co/80x80/F6B17A/000000?text=Arte" }
+                ]
+            }
+        ];
+
+        const results = {
+            'E': {
+                title: "Exatas",
+                description: "Você tem perfil lógico, analítico e curioso. Adora resolver problemas e usar a tecnologia a seu favor.",
+                professions: ["Engenheiro (Civil, Elétrica, Mecânica, Telecomunicações, etc.)", "Cientista de Dados", "Programador", "Analista de Sistemas", "Matemático", "Físico"],
+                courses: [
+                    { name: "Engenharia Civil", type: "Bacharelado" },
+                    { name: "Engenharia de Computação", type: "Bacharelado" },
+                    { name: "Engenharia de Produção", type: "Bacharelado" },
+                    { name: "Ciência da Computação / Sistemas de Informação", type: "Bacharelado / Tecnologia" },
+                    { name: "Matemática", type: "Licenciatura ou bacharelado" },
+                    { name: "Física", type: "Licenciatura ou bacharelado" },
+                    { name: "Matemática / Estatística (quando disponível)", type: "" }
+                ],
+                institutions: ["Universidade Federal do Ceará (UFC)", "Instituto Federal do Ceará (IFCE)", "Universidade de Fortaleza (Unifor)", "UNI7 (Centro Universitário 7 de Setembro)", "Faculdade Ari de Sá", "UniAteneu"],
+                contests: ["Concurso Polícia Civil do Ceará → Oficial Investigador (nível superior)", "Concurso Delegado da Polícia Civil do Ceará", "Possíveis concursos para engenheiros em prefeitura ou Estado (Secretarias de obras, SAAE, DER, etc.)", "Órgãos como Departamento Estadual ou Municipal de Transporte e Trânsito, Companhia de Água e Esgoto (CAGECE) podem abrir vagas para engenheiros ou técnicos"]
+            },
+            'S': {
+                title: "Saúde",
+                description: "Você gosta de cuidar, tem empatia e interesse pelo bem-estar dos outros.",
+                professions: ["Médico", "Enfermeiro", "Psicólogo", "Nutricionista", "Biólogo", "Farmacêutico", "Fisioterapia", "Odontologia"],
+                courses: [{name: "Medicina", type: ""}, {name: "Enfermagem", type: ""}, {name: "Psicologia", type: ""}, {name: "Biomedicina (se disponível)", type: ""}, {name: "Fisioterapia", type: ""}, {name: "Odontologia", type: ""}, {name: "Nutrição", type: ""}, {name: "Biologia", type: ""}],
+                institutions: ["UFC (Universidade Federal do Ceará)", "Unifor", "Uni7", "UniAteneu", "Faculdade Farias Brito", "Unichristus"],
+                contests: ["Concursos para o setor de saúde pública (Prefeitura de Fortaleza, Estado do Ceará) → Enfermeiros, Médicos, Psicólogos etc.", "Concursos de saúde em hospitais universitários federais (como da UFC) ou estaduais", "Editais do SUS local ou Secretaria de Saúde do Estado", "Possíveis concursos em instituições como IML (Instituto Médico Legal), ou laboratórios públicos"]
+            },
+            'H': {
+                title: "Humanas",
+                description: "Você gosta de lidar com pessoas, ideias, comunicação e questões sociais.",
+                professions: ["Advogado", "Professor", "Administrador", "Jornalista", "Psicólogo Organizacional", "Diplomata", "Relações Públicas"],
+                courses: [{name: "Direito", type: ""}, {name: "Pedagogia", type: ""}, {name: "Jornalismo", type: ""}, {name: "Administração", type: ""}, {name: "Psicologia", type: ""}, {name: "Ciências Sociais", type: ""}, {name: "Comunicação Social / Publicidade e Propaganda", type: ""}],
+                institutions: ["UFC", "Universidade de Fortaleza", "UNI7", "Faculdade Farias Brito"],
+                contests: ["Concurso Delegado da Polícia Civil CE (necessário curso de Direito)", "Concursos para Analista Judiciário / Técnico Judiciário em tribunais estaduais ou federais baseados no Ceará", "Concursos para professor no Estado ou Município", "Concurso INSS ou Receita Federal (áreas administrativas)"]
+            },
+            'A': {
+                title: "Artes",
+                description: "Você é criativo, gosta de se expressar e transformar ideias em algo único.",
+                professions: ["Designer", "Artista Plástico", "Músico", "Ator", "Publicitário", "Escritor", "Cineasta"],
+                courses: [{name: "Artes Visuais", type: ""}, {name: "Música", type: ""}, {name: "Design Gráfico ou Design de Interiores", type: ""}, {name: "Comunicação / Publicidade e Propaganda", type: ""}, {name: "Teatro / Artes Cênicas (se houver oferta)", type: ""}, {name: "Cinema / Produção Cultural", type: ""}],
+                institutions: ["UNI7", "Universidade de Fortaleza", "Faculdade Farias Brito", "Unichristus"],
+                contests: ["Professor de Artes/Música nas redes municipal ou estadual", "Editais culturais da Prefeitura de Fortaleza ou Governo do Ceará para produção cultural, teatro, música, dança", "Concursos para comunicação em órgãos públicos (setores de cultura, comunicação social)", "Possíveis concursos para publicidade ou design gráfico em órgãos governamentais ou prefeituras"]
+            },
+            'C': {
+                title: "Concursos Públicos",
+                description: "Você gosta de estabilidade, disciplina e segurança. Tem perfil para defender, proteger ou administrar serviços públicos.",
+                professions: ["Policial Civil", "Policial Federal", "Bombeiro Militar", "Auditor Fiscal", "Técnico Judiciário", "Agente de Segurança"],
+                courses: [{name: "Direito", type: ""}, {name: "Gestão Pública", type: ""}, {name: "Administração", type: ""}, {name: "Segurança Pública (ou cursos relacionados, se existirem)", type: ""}, {name: "Cursos Técnicos de nível médio também se for para cargos que exigem isso", type: ""}],
+                institutions: ["UFC", "Unifor", "UNI7", "Farias Brito", "Unichristus"],
+                contests: ["Concurso Polícia Civil CE → Oficial Investigador; Delegado.", "Concurso Polícia Penal CE previsto.", "Guarda Municipal de Fortaleza (quando for realizado)"]
+            }
+        };
+
+        const restartButton = document.getElementById('restart-button');
+        const nextButton = document.getElementById('next-button');
+        const backButton = document.getElementById('back-button');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const progressText = document.getElementById('progress-text');
+        const resultContent = document.getElementById('result-content');
+
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+        function startQuiz() {
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            userAnswers = new Array(questions.length).fill(undefined);
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.q;
+            optionsContainer.innerHTML = '';
+            
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button w-full p-4 rounded-xl border-2 border-gray-300 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-left';
+                button.addEventListener('click', () => handleAnswer(index));
+                button.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <img src="${option.image}" class="w-12 h-12 rounded-md object-cover flex-shrink-0" alt="Opção">
+                        <span>${option.text}</span>
+                    </div>
+                `;
+                optionsContainer.appendChild(button);
+            });
+
+            progressText.textContent = `Questão ${currentQuestionIndex + 1} de ${questions.length}`;
+            updateNavigation();
+        }
+
+        function handleAnswer(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            updateNavigation();
+        }
+        
+        function updateNavigation() {
+            const buttons = optionsContainer.querySelectorAll('.option-button');
+            buttons.forEach((btn, index) => {
+                btn.classList.toggle('selected', index === userAnswers[currentQuestionIndex]);
+            });
+
+            nextButton.disabled = userAnswers[currentQuestionIndex] === undefined;
+            backButton.classList.toggle('hidden', currentQuestionIndex === 0);
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+        
+        function calculateFinalScores() {
+             let finalScores = { E: 0, S: 0, H: 0, A: 0, C: 0 };
+             userAnswers.forEach((answerIndex, questionIndex) => {
+                 if(answerIndex !== undefined) {
+                     const question = questions[questionIndex];
+                     const points = question.options[answerIndex].points;
+                     for (const profile in points) {
+                        if (finalScores.hasOwnProperty(profile)) {
+                            finalScores[profile] += points[profile];
+                        }
+                    }
+                 }
+             });
+             return finalScores;
+        }
+
+        function showResult() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            
+            const finalScores = calculateFinalScores();
+            const maxScore = Math.max(...Object.values(finalScores));
+            const tiedProfiles = Object.keys(finalScores).filter(key => finalScores[key] === maxScore && maxScore > 0);
+
+            let resultHtml = '';
+            
+            if (tiedProfiles.length === 0) {
+                 resultHtml = '<p class="text-center text-gray-600">Você não respondeu perguntas suficientes para determinar um perfil. Tente novamente!</p>';
+            } else {
+                 tiedProfiles.forEach(profileKey => {
+                    const result = results[profileKey];
+                    resultHtml += `
+                    <div class="mb-8">
+                        <div class="flex items-center mb-4">
+                            <span class="text-3xl font-bold text-blue-600 mr-3">🔹</span>
+                            <h3 class="text-2xl font-bold text-blue-700">Perfil ${result.title}</h3>
+                        </div>
+                        <p class="text-gray-600 mb-6">${result.description}</p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800 mb-2">✅ Profissões indicadas:</h4>
+                                <p class="text-gray-600">${result.professions.join(', ')}</p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800 mb-2">🎓 Cursos recomendados em Fortaleza/CE:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">${result.courses.map(c => `<li>${c.name} ${c.type ? `(${c.type})` : ''}</li>`).join('')}</ul>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800 mb-2">🏫 Onde estudar em Fortaleza/CE:</h4>
+                                <p class="text-gray-600">${result.institutions.join(', ')}</p>
+                            </div>
+                            
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800 mb-2">📑 Concursos públicos em Fortaleza/CE ou para o Estado do Ceará:</h4>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">${result.contests.map(c => `<li>${c}</li>`).join('')}</ul>
+                            </div>
+                        </div>
+                    </div><hr class="my-6"/>`;
+                });
+            }
+            
+            resultContent.innerHTML = resultHtml;
+        }
+
+        // Adicionar os event listeners
+        restartButton.addEventListener('click', startQuiz);
+        nextButton.addEventListener('click', nextQuestion);
+        backButton.addEventListener('click', previousQuestion);
+        
+        // Iniciar o quiz assim que a página carregar
+        document.addEventListener('DOMContentLoaded', startQuiz);
+    </script>
+</body>
+</html>
+
