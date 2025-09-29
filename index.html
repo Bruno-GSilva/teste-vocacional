@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teste Vocacional</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estilos originais da página inicial */
         * {
             margin: 0;
             padding: 0;
@@ -20,8 +18,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
-            padding: 20px;
+            overflow: hidden;
         }
         
         .container {
@@ -32,17 +29,19 @@
             padding: 60px 40px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            max-width: 650px;
-            width: 100%;
+            max-width: 500px;
+            width: 90%;
             animation: slideUp 1s ease-out;
             position: relative;
-            z-index: 1;
         }
         
         .container::before {
             content: '';
             position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
             border-radius: 22px;
             z-index: -1;
@@ -51,34 +50,53 @@
         }
         
         h1 {
-            font-size: 3.5rem; color: #ffffff; margin-bottom: 20px;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); font-weight: 700;
-            letter-spacing: -1px; animation: textGlow 2s ease-in-out infinite alternate;
+            font-size: 3.5rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+            letter-spacing: -1px;
+            animation: textGlow 2s ease-in-out infinite alternate;
         }
         
         .subtitle {
-            font-size: 1.2rem; color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 40px; line-height: 1.5;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            line-height: 1.5;
         }
         
         .start-btn {
             background: linear-gradient(135deg, #ff6b6b, #ffa500);
-            color: white; border: none; padding: 18px 40px;
-            font-size: 1.3rem; font-weight: 600; border-radius: 50px;
-            cursor: pointer; transition: all 0.3s ease;
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
             box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
-            text-transform: uppercase; letter-spacing: 1px;
-            position: relative; overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
         }
         
         .start-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%;
-            width: 100%; height: 100%;
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.5s;
         }
         
-        .start-btn:hover::before { left: 100%; }
+        .start-btn:hover::before {
+            left: 100%;
+        }
         
         .start-btn:hover {
             transform: translateY(-3px);
@@ -86,13 +104,23 @@
             background: linear-gradient(135deg, #ff5252, #ff8f00);
         }
         
+        .start-btn:active {
+            transform: translateY(-1px);
+        }
+        
         .floating-icons {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; overflow: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
         }
         
         .icon {
-            position: absolute; font-size: 2rem;
+            position: absolute;
+            font-size: 2rem;
             color: rgba(255, 255, 255, 0.1);
             animation: float 6s ease-in-out infinite;
         }
@@ -104,339 +132,93 @@
         .icon:nth-child(5) { top: 70%; left: 5%; animation-delay: 4s; }
         
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes textGlow {
-            from { text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); }
-            to { text-shadow: 0 4px 20px rgba(255, 255, 255, 0.3); }
-        }
-        @keyframes borderGlow {
-            from { opacity: 0.5; } to { opacity: 1; }
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        /* Estilos adicionais para o quiz */
-        #question-text {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        @keyframes textGlow {
+            from {
+                text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            }
+            to {
+                text-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+            }
         }
-
-        .option-button {
-            background-color: rgba(255, 255, 255, 0.8);
-            color: #333;
-            transition: all 0.2s ease-in-out;
-            border: 2px solid transparent;
+        
+        @keyframes borderGlow {
+            from {
+                opacity: 0.5;
+            }
+            to {
+                opacity: 1;
+            }
         }
-
-        .option-button:hover {
-            background-color: rgba(255, 255, 255, 1);
-            transform: scale(1.02);
-        }
-
-        .option-button.selected {
-            border-color: #ff6b6b;
-            background-color: white;
-            box-shadow: 0 0 15px rgba(255, 107, 107, 0.5);
-        }
-
-        #progress-text {
-            color: rgba(255, 255, 255, 0.9);
-            margin-top: 1.5rem;
-        }
-
-        /* Estilos para o resultado */
-        #result-content {
-            color: #333;
-            text-align: left;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            max-height: 60vh;
-            overflow-y: auto;
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
         }
         
         @media (max-width: 600px) {
-            .container { padding: 40px 20px; }
-            h1 { font-size: 2.5rem; }
-            .subtitle { font-size: 1rem; }
-            .start-btn { padding: 16px 32px; font-size: 1.1rem; }
-            #question-text { font-size: 1.2rem; }
+            .container {
+                padding: 40px 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .start-btn {
+                padding: 16px 32px;
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="floating-icons">
-        <div class="icon">🎓</div> <div class="icon">💡</div> <div class="icon">🔬</div>
-        <div class="icon">🎨</div> <div class="icon">⚖️</div>
+        <div class="icon">🎓</div>
+        <div class="icon">💡</div>
+        <div class="icon">🔬</div>
+        <div class="icon">🎨</div>
+        <div class="icon">⚖️</div>
     </div>
     
-    <div id="start-screen" class="container">
+    <div class="container">
         <h1>Teste Vocacional</h1>
-        <p class="subtitle">Descubra sua vocação profissional e encontre o caminho ideal para seu futuro.</p>
-        <p class="subtitle" style="font-weight: bold;">Teste aprovado por psicólogo!</p>
-        <button id="start-button" class="start-btn">Iniciar Teste</button>
-    </div>
-
-    <div id="quiz-screen" class="container hidden">
-        <div id="question-container">
-            <h2 id="question-text" class="mb-6 text-2xl font-bold"></h2>
-            <div id="options-container" class="space-y-4"></div>
-        </div>
-        <p id="progress-text" class="mt-6 text-lg"></p>
-        <div class="mt-8 flex justify-between w-full">
-            <button id="back-button" class="py-2 px-6 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition-colors">Voltar</button>
-            <button id="next-button" class="py-2 px-6 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed">Avançar</button>
-        </div>
-    </div>
-
-    <div id="result-screen" class="container hidden">
-        <h2 class="text-4xl font-bold text-white mb-6">Seu Resultado:</h2>
-        <div id="result-content" class="bg-white p-6 rounded-lg shadow-lg text-left">
-            </div>
-        <button id="restart-button" class="start-btn mt-8">Refazer Teste</button>
+        <p class="subtitle">Descubra sua vocação profissional e encontre o caminho ideal para seu futuro</p>
+        <p class="subtitle">Teste aprovado por psicólogo !</p>
+        <button class="start-btn" onclick="iniciarTeste()">Iniciar Teste</button>
     </div>
     
     <script>
-        // --- LÓGICA DO QUIZ ---
-        const questions = [
-            // ... (Suas 20 perguntas vão aqui. Coloquei as 3 últimas como exemplo)
-            {
-                q: "18. Se fosse participar de uma olimpíada escolar, seria em…",
-                options: [
-                    { text: "Matemática/Física", points: { E: 3 }, image: "https://images.unsplash.com/photo-1596700810817-f31614749f99" },
-                    { text: "Biologia/Química", points: { S: 3 }, image: "https://images.unsplash.com/photo-1595116030917-f27341e98d9a" },
-                    { text: "História/Geografia", points: { H: 3 }, image: "https://images.unsplash.com/photo-1582294157500-8451b6a386c9" },
-                    { text: "Artes/Literatura", points: { A: 3 }, image: "https://images.unsplash.com/photo-1554522434-58a4369e4f55" }
-                ]
-            },
-            {
-                q: "19. Qual desses concursos você faria?",
-                options: [
-                    { text: "Polícia Federal", points: { C: 3 }, image: "https://images.unsplash.com/photo-1591544321689-567e98d8d73b" },
-                    { text: "Médico Militar", points: { S: 2, C: 2 }, image: "https://images.unsplash.com/photo-1522923156636-f033102434b9" },
-                    { text: "Diplomata", points: { H: 3 }, image: "https://images.unsplash.com/photo-1594917411603-68d7120e29b4" },
-                    { text: "INSS", points: { H: 2, C: 2 }, image: "https://images.unsplash.com/photo-1515901358352-d98c2d586d52" }
-                ]
-            },
-            {
-                q: "20. Qual frase combina mais com você?",
-                options: [
-                    { text: "A lógica sempre vence.", points: { E: 3 }, image: "https://images.unsplash.com/photo-1510915228359-bb810755353e" },
-                    { text: "Cuidar dos outros é cuidar de mim mesmo.", points: { S: 3 }, image: "https://images.unsplash.com/photo-1588696956247-f4e9121a9a83" },
-                    { text: "A justiça é o meu caminho.", points: { H: 2, C: 2 }, image: "https://images.unsplash.com/photo-1526436894050-b996e382c7a5" },
-                    { text: "A vida sem arte não tem graça.", points: { A: 3 }, image: "https://images.unsplash.com/photo-1579294247291-032c1c686e0c" }
-                ]
-            }
-            // Adicione as outras 17 perguntas aqui...
-        ];
-
-        const results = {
-            'E': {
-                title: "Exatas",
-                description: "Você tem perfil lógico, analítico e curioso. Adora resolver problemas e usar a tecnologia a seu favor.",
-                professions: ["Engenheiro (Civil, Elétrica, Mecânica, Telecomunicações, etc.)", "Cientista de Dados", "Programador", "Analista de Sistemas", "Matemático", "Físico"],
-                courses: [
-                    { name: "Engenharia Civil", type: "Bacharelado" },
-                    { name: "Engenharia de Computação", type: "Bacharelado" },
-                    { name: "Engenharia de Produção", type: "Bacharelado" },
-                    { name: "Ciência da Computação / Sistemas de Informação", type: "Bacharelado / Tecnologia" },
-                    { name: "Matemática", type: "Licenciatura ou bacharelado" },
-                    { name: "Física", type: "Licenciatura ou bacharelado" },
-                    { name: "Matemática / Estatística (quando disponível)", type: "" }
-                ],
-                institutions: ["Universidade Federal do Ceará (UFC)", "Instituto Federal do Ceará (IFCE)", "Universidade de Fortaleza (Unifor)", "UNI7 (Centro Universitário 7 de Setembro)", "Faculdade Ari de Sá", "UniAteneu"],
-                contests: ["Concurso Polícia Civil do Ceará → Oficial Investigador (nível superior)", "Concurso Delegado da Polícia Civil do Ceará", "Possíveis concursos para engenheiros em prefeitura ou Estado (Secretarias de obras, SAAE, DER, etc.)", "Órgãos como Departamento Estadual ou Municipal de Transporte e Trânsito, Companhia de Água e Esgoto (CAGEGE) podem abrir vagas para engenheiros ou técnicos"]
-            },
-            'S': {
-                title: "Saúde",
-                description: "Você gosta de cuidar, tem empatia e interesse pelo bem-estar dos outros.",
-                professions: ["Médico", "Enfermeiro", "Psicólogo", "Nutricionista", "Biólogo", "Farmacêutico", "Fisioterapia", "Odontologia"],
-                courses: ["Medicina", "Enfermagem", "Psicologia", "Biomedicina (se disponível)", "Fisioterapia", "Odontologia", "Nutrição", "Biologia"],
-                institutions: ["UFC (Universidade Federal do Ceará)", "Unifor", "Uni7", "UniAteneu", "Faculdade Farias Brito", "Unichristus"],
-                contests: ["Concursos para o setor de saúde pública (Prefeitura de Fortaleza, Estado do Ceará) → Enfermeiros, Médicos, Psicólogos etc.", "Concursos de saúde em hospitais universitários federais (como da UFC) ou estaduais", "Editais do SUS local ou Secretaria de Saúde do Estado", "Possíveis concursos em instituições como IML (Instituto Médico Legal), ou laboratórios públicos"]
-            },
-            'H': {
-                title: "Humanas",
-                description: "Você gosta de lidar com pessoas, ideias, comunicação e questões sociais.",
-                professions: ["Advogado", "Professor", "Administrador", "Jornalista", "Psicólogo Organizacional", "Diplomata", "Relações Públicas"],
-                courses: ["Direito", "Pedagogia", "Jornalismo", "Administração", "Psicologia", "Ciências Sociais", "Comunicação Social / Publicidade e Propaganda"],
-                institutions: ["UFC", "Universidade de Fortaleza", "UNI7", "Faculdade Farias Brito"],
-                contests: ["Concurso Delegado da Polícia Civil CE (necessário curso de Direito)", "Concursos para Analista Judiciário / Técnico Judiciário em tribunais estaduais ou federais baseados no Ceará", "Concursos para professor no Estado ou Município", "Concurso INSS ou Receita Federal (áreas administrativas)"]
-            },
-            'A': {
-                title: "Artes",
-                description: "Você é criativo, gosta de se expressar e transformar ideias em algo único.",
-                professions: ["Designer", "Artista Plástico", "Músico", "Ator", "Publicitário", "Escritor", "Cineasta"],
-                courses: ["Artes Visuais", "Música", "Design Gráfico ou Design de Interiores", "Comunicação / Publicidade e Propaganda", "Teatro / Artes Cênicas (se houver oferta)", "Cinema / Produção Cultural"],
-                institutions: ["UNI7", "Universidade de Fortaleza", "Faculdade Farias Brito", "Unichristus"],
-                contests: ["Professor de Artes/Música nas redes municipal ou estadual", "Editais culturais da Prefeitura de Fortaleza ou Governo do Ceará para produção cultural, teatro, música, dança", "Concursos para comunicação em órgãos públicos (setores de cultura, comunicação social)", "Possíveis concursos para publicidade ou design gráfico em órgãos governamentais ou prefeituras"]
-            },
-            'C': {
-                title: "Concursos Públicos",
-                description: "Você gosta de estabilidade, disciplina e segurança. Tem perfil para defender, proteger ou administrar serviços públicos.",
-                professions: ["Policial Civil", "Policial Federal", "Bombeiro Militar", "Auditor Fiscal", "Técnico Judiciário", "Agente de Segurança"],
-                courses: ["Direito", "Gestão Pública", "Administração", "Segurança Pública (ou cursos relacionados, se existirem)", "Cursos Técnicos de nível médio também se for para cargos que exigem isso"],
-                institutions: ["UFC", "Unifor", "UNI7", "Farias Brito", "Unichristus"],
-                contests: ["Concurso Polícia Civil CE → Oficial Investigador; Delegado.", "Concurso Polícia Penal CE previsto.", "Guarda Municipal de Fortaleza (quando for realizado)"]
-            }
-        };
-
-        const startButton = document.getElementById('start-button');
-        const restartButton = document.getElementById('restart-button');
-        const nextButton = document.getElementById('next-button');
-        const backButton = document.getElementById('back-button');
-        const startScreen = document.getElementById('start-screen');
-        const quizScreen = document.getElementById('quiz-screen');
-        const resultScreen = document.getElementById('result-screen');
-        const questionText = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const progressText = document.getElementById('progress-text');
-        const resultContent = document.getElementById('result-content');
-
-        let currentQuestionIndex = 0;
-        let scores = { E: 0, S: 0, H: 0, A: 0, C: 0 };
-        let userAnswers = []; // Armazena o índice da resposta de cada questão
-        let questionScores = []; // Armazena a pontuação de cada resposta dada
-
-        function startQuiz() {
-            startScreen.classList.add('hidden');
-            resultScreen.classList.add('hidden');
-            quizScreen.classList.remove('hidden');
-
-            currentQuestionIndex = 0;
-            scores = { E: 0, S: 0, H: 0, A: 0, C: 0 };
-            userAnswers = new Array(questions.length).fill(undefined);
-            questionScores = new Array(questions.length).fill(undefined);
+        function iniciarTeste() {
+            const btn = document.querySelector('.start-btn');
+            btn.style.transform = 'scale(0.95)';
             
-            displayQuestion();
-        }
-
-        function displayQuestion() {
-            const currentQuestion = questions[currentQuestionIndex];
-            questionText.textContent = currentQuestion.q;
-            optionsContainer.innerHTML = '';
-            
-            currentQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'option-button w-full p-4 rounded-xl text-gray-700 focus:outline-none';
-                button.dataset.points = JSON.stringify(option.points);
-                button.addEventListener('click', () => handleAnswer(button, index, option.points));
-                button.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <img src="${option.image}" class="w-12 h-12 rounded-md object-cover" alt="Imagem" onerror="this.onerror=null; this.src='https://placehold.co/80x80/cccccc/ffffff?text=Img'">
-                        <span class="text-left flex-1">${option.text}</span>
-                    </div>
-                `;
-                optionsContainer.appendChild(button);
-            });
-
-            progressText.textContent = `Questão ${currentQuestionIndex + 1} de ${questions.length}`;
-            updateNavigation();
-        }
-
-        function handleAnswer(button, optionIndex, points) {
-            // Remove a pontuação antiga se já houver uma resposta para esta pergunta
-            if (questionScores[currentQuestionIndex]) {
-                const oldPoints = questionScores[currentQuestionIndex];
-                for (const profile in oldPoints) {
-                    scores[profile] -= oldPoints[profile];
-                }
-            }
-            
-            // Adiciona a nova pontuação
-            for (const profile in points) {
-                scores[profile] += points[profile];
-            }
-
-            // Salva a resposta e a pontuação
-            userAnswers[currentQuestionIndex] = optionIndex;
-            questionScores[currentQuestionIndex] = points;
-            
-            updateNavigation();
+            setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+                // Redireciona para a página do quiz
+                window.location.href = 'quiz.html';
+            }, 150);
         }
         
-        function updateNavigation() {
-             // Atualiza visualmente o botão selecionado
-            const buttons = optionsContainer.querySelectorAll('.option-button');
-            buttons.forEach((btn, index) => {
-                btn.classList.toggle('selected', index === userAnswers[currentQuestionIndex]);
-            });
-
-            // Habilita/desabilita o botão de avançar
-            nextButton.disabled = userAnswers[currentQuestionIndex] === undefined;
-
-            // Mostra/esconde o botão de voltar
-            backButton.classList.toggle('hidden', currentQuestionIndex === 0);
-        }
-
-        function nextQuestion() {
-            if (currentQuestionIndex < questions.length - 1) {
-                currentQuestionIndex++;
-                displayQuestion();
-            } else {
-                showResult();
-            }
-        }
-
-        function previousQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                displayQuestion();
-            }
-        }
-
-        function showResult() {
-            quizScreen.classList.add('hidden');
-            resultScreen.classList.remove('hidden');
-
-            const maxScore = Math.max(...Object.values(scores));
-            const tiedProfiles = Object.keys(scores).filter(key => scores[key] === maxScore);
-
-            let resultHtml = '';
-            tiedProfiles.forEach(profileKey => {
-                const result = results[profileKey];
-                resultHtml += `
-                <div class="mb-8">
-                    <h3 class="text-2xl font-bold text-blue-700 mb-2">Perfil: ${result.title}</h3>
-                    <p class="text-gray-600 mb-4">${result.description}</p>
-                    <div class="space-y-3">
-                        <div>
-                            <h4 class="font-bold text-lg text-gray-800">✅ Profissões indicadas:</h4>
-                            <p class="text-gray-600">${result.professions.join(', ')}.</p>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-gray-800">🎓 Cursos recomendados (Fortaleza/CE):</h4>
-                            <ul class="list-disc list-inside text-gray-600">${result.courses.map(c => `<li>${c.name} ${c.type ? `(${c.type})` : ''}</li>`).join('')}</ul>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-gray-800">🏫 Onde estudar (Fortaleza/CE):</h4>
-                            <p class="text-gray-600">${result.institutions.join(', ')}.</p>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg text-gray-800">📑 Concursos públicos (CE):</h4>
-                            <ul class="list-disc list-inside text-gray-600">${result.contests.map(c => `<li>${c}</li>`).join('')}</ul>
-                        </div>
-                    </div>
-                </div>
-                <hr class="my-6">
-                `;
-            });
-            resultContent.innerHTML = resultHtml;
-        }
-
-        // Adiciona os "escutadores de eventos" aos botões
-        startButton.addEventListener('click', startQuiz);
-        restartButton.addEventListener('click', startQuiz);
-        nextButton.addEventListener('click', nextQuestion);
-        backButton.addEventListener('click', previousQuestion);
-
+        // As animações de partículas foram removidas para simplificar,
+        // mas você pode adicioná-las de volta se quiser.
     </script>
 </body>
 </html>
