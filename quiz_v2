@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Vocacional</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .question-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            animation: slideIn 0.6s ease-out;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0.6;
+            animation: borderPulse 2s ease-in-out infinite alternate;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            animation: progressGlow 2s ease-in-out infinite alternate;
+        }
+        
+        .question-number {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .question-text {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 30px;
+            line-height: 1.4;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+        }
+        
+        .options-container {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option:hover::before {
+            left: 100%;
+        }
+        
+        .option.selected {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            gap: 20px;
+        }
+        
+        .nav-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 120px;
+        }
+        
+        .prev-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .prev-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+            color: white;
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+        }
+        
+        .next-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #45b7d1, #4ecdc4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .results-container {
+            text-align: center;
+            padding: 60px 40px;
+        }
+        
+        .results-title {
+            font-size: 3rem;
+            color: #ffffff;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-weight: 700;
+        }
+        
+        .profession-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .profession-title {
+            font-size: 2rem;
+            color: #4ecdc4;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .profession-description {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .info-section {
+            margin: 20px 0;
+        }
+        
+        .info-title {
+            font-size: 1.3rem;
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .info-content {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+        
+        .course-link {
+            color: #4ecdc4;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        
+        .course-link:hover {
+            color: #45b7d1;
+            text-decoration: underline;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 30px;
+        }
+        
+        .restart-btn:hover {
+            background: linear-gradient(135deg, #ff5252, #ff8f00);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(255, 107, 107, 0.4);
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes borderPulse {
+            from {
+                opacity: 0.4;
+            }
+            to {
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes progressGlow {
+            from {
+                box-shadow: 0 0 5px rgba(78, 205, 196, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(78, 205, 196, 0.8);
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 10px;
+            }
+            
+            .question-card {
+                padding: 30px 20px;
+            }
+            
+            .question-text {
+                font-size: 1.4rem;
+            }
+            
+            .option {
+                padding: 15px;
+                font-size: 1rem;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="question-card" id="questionCard">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <div class="question-number" id="questionNumber">Pergunta 1 de 20</div>
+            <div class="question-text" id="questionText"></div>
+            
+            <div class="options-container" id="optionsContainer">
+                <!-- Options will be generated here -->
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="nav-btn prev-btn" id="prevBtn" onclick="previousQuestion()">Anterior</button>
+                <button class="nav-btn next-btn" id="nextBtn" onclick="nextQuestion()" disabled>Próxima</button>
+            </div>
+        </div>
+        
+        <div class="question-card results-container hidden" id="resultsContainer">
+            <div class="results-title">Seu Resultado!</div>
+            <div id="resultsContent"></div>
+            <button class="restart-btn" onclick="restartQuiz()">Refazer Teste</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                text: "Qual dessas séries mais te prende?",
+                options: [
+                    { text: "Breaking Bad - A química por trás do crime", area: "exatas" },
+                    { text: "Grey's Anatomy - Salvando vidas no hospital", area: "biologicas" },
+                    { text: "Suits - Advocacia e negociações", area: "humanas" },
+                    { text: "Black Mirror - Tecnologia e sociedade", area: "exatas" }
+                ]
+            },
+            {
+                text: "Em um grupo de trabalho escolar, você prefere:",
+                options: [
+                    { text: "Liderar e organizar as tarefas", area: "humanas" },
+                    { text: "Fazer os cálculos e análises", area: "exatas" },
+                    { text: "Pesquisar e cuidar da parte teórica", area: "biologicas" },
+                    { text: "Criar a apresentação visual", area: "humanas" }
+                ]
+            },
+            {
+                text: "Como você lida com pressão e prazos apertados?",
+                options: [
+                    { text: "Me organizo e cumpro tudo com antecedência", area: "exatas" },
+                    { text: "Consigo lidar, mas prefiro ambientes mais tranquilos", area: "humanas" },
+                    { text: "Trabalho melhor sob pressão, especialmente em emergências", area: "biologicas" },
+                    { text: "Prefiro trabalhar no meu próprio ritmo", area: "humanas" }
+                ]
+            },
+            {
+                text: "Qual filme te deixa mais empolgado?",
+                options: [
+                    { text: "Interestelar - Viagem espacial e física", area: "exatas" },
+                    { text: "Patch Adams - Medicina humanizada", area: "biologicas" },
+                    { text: "O Discurso do Rei - Superando desafios pessoais", area: "humanas" },
+                    { text: "Steve Jobs - Inovação e tecnologia", area: "exatas" }
+                ]
+            },
+            {
+                text: "O que você faz no tempo livre?",
+                options: [
+                    { text: "Leio sobre descobertas científicas", area: "biologicas" },
+                    { text: "Resolvo quebra-cabeças e jogos de lógica", area: "exatas" },
+                    { text: "Escrevo, desenho ou crio conteúdo", area: "humanas" },
+                    { text: "Cuido de plantas ou animais", area: "biologicas" }
+                ]
+            },
+            {
+                text: "Como você prefere aprender coisas novas?",
+                options: [
+                    { text: "Praticando e resolvendo exercícios", area: "exatas" },
+                    { text: "Conversando e trocando ideias com outras pessoas", area: "biologicas" },
+                    { text: "Lendo livros e fazendo resumos", area: "humanas" },
+                    { text: "Raciocínio lógico e resolução de problemas complexos", area: "exatas" }
+                ]
+            },
+            {
+                text: "Em uma feira de ciências, você escolheria:",
+                options: [
+                    { text: "Criar um robô funcional", area: "exatas" },
+                    { text: "Estudar o comportamento animal", area: "biologicas" },
+                    { text: "Pesquisar história local", area: "humanas" },
+                    { text: "Desenvolver um app", area: "exatas" }
+                ]
+            },
+            {
+                text: "Qual matéria você gosta mais?",
+                options: [
+                    { text: "Matemática - Números são meu forte", area: "exatas" },
+                    { text: "Biologia - A vida me fascina", area: "biologicas" },
+                    { text: "História - Adoro conhecer o passado", area: "humanas" },
+                    { text: "Literatura - Amo ler e interpretar", area: "humanas" }
+                ]
+            },
+            {
+                text: "Qual problema mundial você gostaria de resolver?",
+                options: [
+                    { text: "Mudanças climáticas", area: "biologicas" },
+                    { text: "Desigualdade social", area: "humanas" },
+                    { text: "Falta de energia limpa", area: "exatas" },
+                    { text: "Doenças incuráveis", area: "biologicas" }
+                ]
+            },
+            {
+                text: "Seu ídolo seria mais parecido com:",
+                options: [
+                    { text: "Einstein - Genialidade em física", area: "exatas" },
+                    { text: "Marie Curie - Pioneira na ciência", area: "biologicas" },
+                    { text: "Nelson Mandela - Liderança e justiça", area: "humanas" },
+                    { text: "Steve Jobs - Inovação tecnológica", area: "exatas" }
+                ]
+            },
+            {
+                text: "Em uma festa, você prefere:",
+                options: [
+                    { text: "Conversar sobre tecnologia", area: "exatas" },
+                    { text: "Discutir questões sociais", area: "humanas" },
+                    { text: "Falar sobre saúde e bem-estar", area: "biologicas" },
+                    { text: "Contar histórias interessantes", area: "humanas" }
+                ]
+            },
+            {
+                text: "Qual app você usa mais?",
+                options: [
+                    { text: "Calculator+ para resolver contas", area: "exatas" },
+                    { text: "Duolingo para aprender idiomas", area: "humanas" },
+                    { text: "PlantNet para identificar plantas", area: "biologicas" },
+                    { text: "GitHub para programar", area: "exatas" }
+                ]
+            },
+            {
+                text: "Qual banda/artista te inspira mais?",
+                options: [
+                    { text: "Radiohead - Experimentação e tecnologia", area: "exatas" },
+                    { text: "Emicida - Crítica social através da música", area: "humanas" },
+                    { text: "Coldplay - Conexão com a natureza", area: "biologicas" },
+                    { text: "BTS - Impacto cultural global", area: "humanas" }
+                ]
+            },
+            {
+                text: "Se você fosse um super-herói, seu poder seria:",
+                options: [
+                    { text: "Super inteligência para resolver qualquer problema", area: "exatas" },
+                    { text: "Curar qualquer doença", area: "biologicas" },
+                    { text: "Ler mentes e entender pessoas", area: "humanas" },
+                    { text: "Controlar a tecnologia", area: "exatas" }
+                ]
+            },
+            {
+                text: "Qual documentário te chamaria atenção?",
+                options: [
+                    { text: "Como construir um computador quântico", area: "exatas" },
+                    { text: "A vida secreta das baleias", area: "biologicas" },
+                    { text: "Grandes civilizações da humanidade", area: "humanas" },
+                    { text: "O impacto das redes sociais", area: "humanas" }
+                ]
+            },
+            {
+                text: "Qual seria seu trabalho dos sonhos?",
+                options: [
+                    { text: "Criar a próxima grande inovação tecnológica", area: "exatas" },
+                    { text: "Descobrir a cura para uma doença rara", area: "biologicas" },
+                    { text: "Escrever um livro que mude vidas", area: "humanas" },
+                    { text: "Liderar um projeto social transformador", area: "humanas" }
+                ]
+            },
+            {
+                text: "Qual experiência te deixaria mais ansioso?",
+                options: [
+                    { text: "Apresentar uma descoberta científica", area: "biologicas" },
+                    { text: "Demonstrar uma nova tecnologia", area: "exatas" },
+                    { text: "Defender uma causa social", area: "humanas" },
+                    { text: "Contar uma história emocionante", area: "humanas" }
+                ]
+            },
+            {
+                text: "Qual evento você não perderia?",
+                options: [
+                    { text: "Campus Party - Tecnologia e inovação", area: "exatas" },
+                    { text: "TED Talks sobre ciência", area: "biologicas" },
+                    { text: "Festival de literatura", area: "humanas" },
+                    { text: "Conferência sobre direitos humanos", area: "humanas" }
+                ]
+            },
+            {
+                text: "Qual emoji você mais usa?",
+                options: [
+                    { text: "🤖 - Sou fascinado por tecnologia", area: "exatas" },
+                    { text: "🌱 - Amo a natureza e vida", area: "biologicas" },
+                    { text: "📚 - Conhecimento é tudo", area: "humanas" },
+                    { text: "⚖️ - Justiça sempre", area: "humanas" }
+                ]
+            },
+            {
+                text: "Se você ganhasse na loteria, investiria em:",
+                options: [
+                    { text: "Uma startup de tecnologia", area: "exatas" },
+                    { text: "Pesquisa para cura de doenças", area: "biologicas" },
+                    { text: "Educação para comunidades carentes", area: "humanas" },
+                    { text: "Preservação ambiental", area: "biologicas" }
+                ]
+            }
+        ];
+
+        const professions = {
+            exatas: {
+                title: "Área de Exatas",
+                description: "Você tem afinidade com números, lógica, tecnologia e resolução de problemas complexos. Sua mente analítica e capacidade de raciocínio abstrato são seus pontos fortes!",
+                courses: [
+                    "Engenharia de Software",
+                    "Ciência da Computação", 
+                    "Engenharia Civil",
+                    "Engenharia Elétrica",
+                    "Matemática",
+                    "Física",
+                    "Arquitetura e Urbanismo"
+                ],
+                universities: "Procure cursos em: USP, UNICAMP, UNESP, PUC, Mackenzie",
+                link: "https://www.guiadacarreira.com.br/cursos/area-exatas/",
+                concursos: [
+                    "Banco do Brasil (Tecnologia)",
+                    "Petrobras (Engenharia)",
+                    "Receita Federal (Auditor Fiscal)",
+                    "Tribunais (Analista de TI)",
+                    "IBGE (Analista de Sistemas)"
+                ]
+            },
+            biologicas: {
+                title: "Área de Biológicas",
+                description: "Você tem paixão pela vida, saúde e bem-estar. Seu interesse em ajudar pessoas e entender os mistérios da natureza te guiam para essa área incrível!",
+                courses: [
+                    "Medicina",
+                    "Enfermagem",
+                    "Fisioterapia",
+                    "Biologia",
+                    "Veterinária",
+                    "Farmácia",
+                    "Nutrição",
+                    "Psicologia"
+                ],
+                universities: "Procure cursos em: USP, UNIFESP, UFRJ, UFMG, PUC",
+                link: "https://www.guiadacarreira.com.br/cursos/area-biologicas/",
+                concursos: [
+                    "SUS (Médico, Enfermeiro)",
+                    "ANVISA (Especialista em Regulação)",
+                    "Ministério da Saúde",
+                    "IBAMA (Analista Ambiental)",
+                    "Prefeituras (Área da Saúde)"
+                ]
+            },
+            humanas: {
+                title: "Área de Humanas",
+                description: "Você se destaca na comunicação, tem interesse por pessoas, sociedade e cultura. Sua capacidade de interpretação e senso crítico são suas grandes qualidades!",
+                courses: [
+                    "Direito",
+                    "Administração",
+                    "Jornalismo",
+                    "Psicologia",
+                    "Pedagogia",
+                    "História",
+                    "Letras",
+                    "Ciências Sociais"
+                ],
+                universities: "Procure cursos em: USP, FGV, UERJ, UnB, PUC-Rio",
+                link: "https://www.guiadacarreira.com.br/cursos/area-humanas/",
+                concursos: [
+                    "Magistratura (Juiz)",
+                    "Ministério Público (Promotor)",
+                    "Defensoria Pública",
+                    "Tribunal de Contas",
+                    "Polícia Civil (Delegado, Escrivão)"
+                ]
+            }
+        };
+
+        let currentQuestion = 0;
+        let answers = [];
+        let scores = { exatas: 0, biologicas: 0, humanas: 0 };
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            
+            document.getElementById('questionNumber').textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+            document.getElementById('questionText').textContent = question.text;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.textContent = option.text;
+                optionDiv.onclick = () => selectOption(index, optionDiv);
+                optionsContainer.appendChild(optionDiv);
+            });
+            
+            // Update progress bar
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        function selectOption(optionIndex, optionElement) {
+            // Remove selection from other options
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Select current option
+            optionElement.classList.add('selected');
+            
+            // Store answer
+            answers[currentQuestion] = {
+                option: optionIndex,
+                area: questions[currentQuestion].options[optionIndex].area
+            };
+            
+            // Enable next button
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+                
+                // Re-select previously selected option
+                if (answers[currentQuestion]) {
+                    const options = document.querySelectorAll('.option');
+                    options[answers[currentQuestion].option].classList.add('selected');
+                    document.getElementById('nextBtn').disabled = false;
+                }
+            } else {
+                calculateResults();
+            }
+            
+            // Update next button text for last question
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('nextBtn').textContent = 'Ver Resultado';
+            } else {
+                document.getElementById('nextBtn').textContent = 'Próxima';
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+                
+                // Re-select previously selected option
+                if (answers[currentQuestion]) {
+                    const options = document.querySelectorAll('.option');
+                    options[answers[currentQuestion].option].classList.add('selected');
+                    document.getElementById('nextBtn').disabled = false;
+                }
+                
+                document.getElementById('nextBtn').textContent = 'Próxima';
+            }
+        }
+
+        function calculateResults() {
+            // Reset scores
+            scores = { exatas: 0, biologicas: 0, humanas: 0 };
+            
+            // Count answers by area
+            answers.forEach(answer => {
+                if (answer && answer.area) {
+                    scores[answer.area]++;
+                }
+            });
+            
+            // Find the area with highest score
+            let topArea = 'humanas';
+            let maxScore = 0;
+            
+            for (const area in scores) {
+                if (scores[area] > maxScore) {
+                    maxScore = scores[area];
+                    topArea = area;
+                }
+            }
+            
+            displayResults(topArea);
+        }
+
+        function displayResults(area) {
+            const profession = professions[area];
+            
+            document.getElementById('questionCard').classList.add('hidden');
+            document.getElementById('resultsContainer').classList.remove('hidden');
+            
+            const resultsContent = document.getElementById('resultsContent');
+            resultsContent.innerHTML = `
+                <div class="profession-card">
+                    <div class="profession-title">${profession.title}</div>
+                    <div class="profession-description">${profession.description}</div>
+                    
+                    <div class="info-section">
+                        <div class="info-title">📚 Cursos Recomendados:</div>
+                        <div class="info-content">${profession.courses.join(', ')}</div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <div class="info-title">🎓 Onde Estudar:</div>
+                        <div class="info-content">
+                            ${profession.universities}<br>
+                            <a href="${profession.link}" target="_blank" class="course-link">Saiba mais sobre os cursos</a>
+                        </div>
+                    </div>
+                    
+                    <div class="info-section">
+                        <div class="info-title">🏛️ Concursos Públicos:</div>
+                        <div class="info-content">${profession.concursos.join(', ')}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = [];
+            scores = { exatas: 0, biologicas: 0, humanas: 0 };
+            
+            document.getElementById('questionCard').classList.remove('hidden');
+            document.getElementById('resultsContainer').classList.add('hidden');
+            
+            displayQuestion();
+        }
+
+        // Initialize quiz
+        displayQuestion();
+    </script>
